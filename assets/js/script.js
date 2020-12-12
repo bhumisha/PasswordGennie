@@ -13,94 +13,87 @@ generateBtn.addEventListener("click", writePassword);
 
 //Generate Password Function
 function generatePassword() {
-  	var minPasswordLen = 8,
-    maxPasswordLen = 128;
+  	var minPasswordLen = 8, maxPasswordLen = 128;
+
+	//Ask user is ready to create own password
   	var ifReadyToGeneratePassword = confirm(
-    	"Do you want to create your own password criteria? "
+    	"Click OK to create your own secured password."
   	);
   
 	if (ifReadyToGeneratePassword) {
     //Getting Password which should >8 and <128
-    	var passwordLength = getPasswordLength();
+		var passwordLength = getPasswordLength();
+		
     	if (passwordLength < minPasswordLen || passwordLength > maxPasswordLen) {
       		passwordLength = getPasswordLength();
-    	}
-
-    //Lets Start with Character Type
-
-		var passwordRegex = "";
-		var lowerCaseAllowed = confirm(
-			"Do you want to includes lowercase(a-z) letters in password?"
-		);
-		var upperCaseAllowed = confirm(
-			"Do you want to includes UPPERCASE(A-Z) letters in password?"
-		);
-		var numericAllowed = confirm(
-			"Do you want to includes Numbers(0-9) in password?"
-		);
-		var specialCharsAllowed = confirm(
-			"Do you want to includes Special Characters in password?"
-		);
-
-		var isAtleastOneOptionSelected = false;
-		if (
-			lowerCaseAllowed ||
-			upperCaseAllowed ||
-			numericAllowed ||
-			specialCharsAllowed
-		) {
-			isAtleastOneOptionSelected = true;
 		}
+	
+    	//Lets Start with Password Character Type
+		var pwdCriteria =  getPasswordCriteriaString();
+		// console.log("pwdCriteria : " + pwdCriteria);
+		return getPasswordFromCriteria(pwdCriteria, passwordLength);
+  	} 
+	else { //// If user is not ready to generate the password.
 		
-		if (isAtleastOneOptionSelected) {
-			var pwdCriteria = "";
-			
-			if (lowerCaseAllowed) {
-				pwdCriteria += "abcdefghijklmnopqrstuvwxyz";
-			}
-
-			if (upperCaseAllowed) {
-				pwdCriteria += "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-			}
-
-			if (numericAllowed) {
-				pwdCriteria += "0123456789";
-			}
-
-			if (specialCharsAllowed) {
-				pwdCriteria += "@$&*~_:;";
-			}
-			return getPasswordFromCriteria(pwdCriteria, passwordLength);
-		} 
-		
-		else 
-		{
-			alert(
-			"You have not selected any password criteria!! Please selecet atleast one"
-			);
-			generatePassword();
-    }
-    //passwordRegex = "/^([a-zA-Z])([0-9])(~*&$@#){"+passwordLength+"}$/g";
-
-    // var lowerCaseAllowed = 0, upperCaseAllowed=0; numericAllowed=0; isSpecialChar = true, specialChar = "";
-    // lowerCaseAllowed = prompt("<b>Do you want to includes LowerCase letters in yor password? if Yes than please enter count of lowercase letters");
-    // upperCaseAllowed = prompt("Does your password includes UpperCase letters? if Yes than please enter count of uppercase letters ");
-    // numericAllowed = prompt("Does your password includes Numbers? if Yes than please enter count of number ");
-    // isSpecialChar = confirm("Does your password includes Special?");
-    // if(isSpecialChar){
-    //   specialChar = prompt("Please enter any special characters which you want to include in password ");
-    // }
-    // // " !"#$%&'()*+,-./:;<=>?@[\]^_`{|}~"
-
-    // if(lowerCaseAllowed + upperCaseAllowed + numericAllowed + (specialChar.length) === passwordLength){
-    //     console.log("Password generate");
-    //     var password = "[^(?=.*\d)(?=.*[a-z]).{(?=.*[A-Z]).{8,128}$]]";
-    // }
-  } else {
-    return "A@babc$23A";
-  }
+		alert("Here is your default secured password");
+		defaultPasswordCriteria = "abcdefghijKLMNOPQRSTUVWXYZ0123!\"#$%&'()";
+    	return getPasswordFromCriteria(defaultPasswordCriteria,15);
+	}
 }
 
+//Generate password criteria sring based on the user select option.
+function getPasswordCriteriaString(){
+	//setting variables based on user response 
+	var lowerCaseAllowed = confirm(
+		"Click OK to confirm to including lowercase(a-z) characters in your password."
+	);
+	var upperCaseAllowed = confirm(
+		"Click OK to confirm to including uppercase(A-Z) characters in your password."
+	);
+	var numericAllowed = confirm(
+		"Click OK to confirm to including numberic(0-9) characters in your password."
+	);
+	var specialCharsAllowed = confirm(
+		"Click OK to confirm to including special characters in your password."
+	);
+
+	var isAtleastOneOptionSelected = false;
+
+	//Atleast one option should be seleted
+	if (lowerCaseAllowed || upperCaseAllowed || numericAllowed || specialCharsAllowed) {
+		isAtleastOneOptionSelected = true;
+	}
+
+	//generating password criteria string based on selected criteria
+	if (isAtleastOneOptionSelected) {
+		var pwdCriteria = "";
+		
+		if (lowerCaseAllowed) {
+			pwdCriteria += "abcdefghijklmnopqrstuvwxyz";
+		}
+
+		if (upperCaseAllowed) {
+			pwdCriteria += "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+		}
+
+		if (numericAllowed) {
+			pwdCriteria += "0123456789";
+		}
+
+		if (specialCharsAllowed) {
+			pwdCriteria += "!\"#$%&'()*+,-./:;<=>?@[\]^_`{|}~";
+		}
+		return pwdCriteria;
+	}
+	else  
+	{
+		alert( "You have not selected any password criteria!! Please selecet atleast one");
+		return  getPasswordCriteriaString();
+	}
+
+}
+
+//Generate password using random function from given string and length.
 function getPasswordFromCriteria(criteria, passwordLen) {
 	var pwd = "";
 	for (var i = 0; i < passwordLen; i++) {
@@ -109,9 +102,8 @@ function getPasswordFromCriteria(criteria, passwordLen) {
   	return pwd;
 }
 
+//Get password Length 
 function getPasswordLength() {
-	var passwordLen = prompt(
-		"Please enter length of Password \n (Your password must have minimum 8 to maximum 128 chars)"
-	);
-	return passwordLen;
+	return  prompt( "How many characters would you like your password to contain? \n (Password lengh should be between 8 to 128)");
+	
 }
